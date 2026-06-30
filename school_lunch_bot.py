@@ -6,8 +6,11 @@ import aiohttp
 import discord
 from discord import app_commands
 from discord.ext import commands
+from dotenv import load_dotenv
 
 # ── 설정 ──────────────────────────────────────────────
+load_dotenv(override=True)  # .env 값이 기존 셸 환경변수보다 우선
+
 DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
 NEIS_KEY = os.environ.get("NEIS_KEY")
 
