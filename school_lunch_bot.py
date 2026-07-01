@@ -17,6 +17,7 @@ NEIS_KEY = os.environ.get("NEIS_KEY")
 ATPT_CODE = "R10"          # 경상북도교육청
 SCHOOL_CODE = "8750829"    # 경북소프트웨어마이스터고등학교
 SCHOOL_NAME = "경북소프트웨어마이스터고등학교"
+CREATED_BY = "Create by @qlellow"
 
 NEIS_URL = "https://open.neis.go.kr/hub/mealServiceDietInfo"
 
@@ -54,26 +55,25 @@ async def fetch_meals(date: datetime.date) -> dict[str, str]:
     return meals
 
 
-# 끼니별 헤딩 이모지
-# MEAL_EMOJI = {"조식": "🌅", "중식": "🍱", "석식": "🌙"}
-
-
 def build_embed(date: datetime.date, meals: dict[str, tuple[list[str], str]], label: str = "급식") -> discord.Embed:
     weekday = ["월", "화", "수", "목", "금", "토", "일"][date.weekday()]
-    title = f"🍽️ {date.strftime('%Y-%m-%d')} ({weekday}) {label}"
-    embed = discord.Embed(title=title, color=0x00A86B)
-    embed.set_footer(text=SCHOOL_NAME)
+    title = f"{date.strftime('%Y-%m-%d')} ({weekday}) {label}"
+    embed = discord.Embed(title=title, color=0x8CE2D0)
+    embed.set_footer(text=CREATED_BY)
 
     if not meals:
         embed.description = "급식 정보가 없어요. (주말/공휴일이거나 아직 미등록)"
         return embed
 
+    show_label = len(meals) > 1  # 전체 출력일 때만 끼니명 표기
     blocks = []
     for name, (lines, cal) in meals.items():
         # 메뉴는 인용글(>), 흰 글씨로 보이게 굵게
         body = "\n".join(f"> **{d}**" for d in lines)
         if cal:
             body += f"\n`{cal}`"
+        if show_label:
+            body = f"**{name}**\n{body}"
         blocks.append(body)
     embed.description = "\n\n".join(blocks)
     return embed
